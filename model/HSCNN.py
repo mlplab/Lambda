@@ -3,7 +3,7 @@
 
 import torch
 from torchsummary import summary
-from .layers import Ghost_layer, Ghost_Bottleneck, ReLU, Leaky, Swish, Mish, FReLU
+from .layers import ReLU, Leaky, Swish, Mish, FReLU
 
 
 class HSCNN(torch.nn.Module):

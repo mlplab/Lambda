@@ -9,9 +9,8 @@ import torch
 from torchsummary import summary
 from data_loader import PatchEvalDataset
 from model.HSCNN import HSCNN
-from model.HIPN import HSI_Network_share
-from model.hyperreconnet import HyperReconNet
-from model.Ghost_HSCNN import Ghost_HSCNN
+from model.DeepSSPrior import DeepSSPrior
+from model.HyperReconNet import HyperReconNet
 from evaluate import RMSEMetrics, PSNRMetrics, SAMMetrics
 from evaluate import ReconstEvaluater
 from pytorch_ssim import SSIM
@@ -37,7 +36,7 @@ else:
     input_ch = 32
 
 
-model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': HSI_Network_share, 'Ghost': Ghost_HSCNN}
+model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior}
 activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
 
 

@@ -10,11 +10,8 @@ import torchvision
 from torchsummary import summary
 from trainer import Trainer
 from model.HSCNN import HSCNN
-from model.HIPN import HSI_Network_share
-from model.hyperreconnet import HyperReconNet
-from model.dense_net import Dense_HSI_prior_Network
-from model.attention_model import Attention_HSI_Model_share
-from model.Ghost_HSCNN import Ghost_HSCNN
+from model.DeepSSPrior import DeepSSPrior
+from model.HyperReconNet import HyperReconNet
 from data_loader import PatchMaskDataset
 from utils import RandomCrop, RandomHorizontalFlip, RandomRotation
 from utils import ModelCheckPoint, Draw_Output
@@ -67,7 +64,7 @@ trained_ckpt_path = f'all_checkpoint_{dt_now.month:02d}{dt_now.day:02d}'
 os.makedirs(trained_ckpt_path, exist_ok=True)
 
 
-model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': HSI_Network_share, 'Ghost': Ghost_HSCNN}
+model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior}
 activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
 
 
