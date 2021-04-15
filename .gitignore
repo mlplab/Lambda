@@ -1,0 +1,18 @@
+# ignore .pth
+*.pth
+# ignore .vscode
+.vscode
+# ignore .zip
+*.zip
+# ignore .mat
+*.mat
+*output*
+*cpython*
+# ignore dataset
+*dataset*/
+# ignore ckpt
+*ckpt*/
+*checkpoint*/
+# ignore output
+*output*/
+*.cpython*
