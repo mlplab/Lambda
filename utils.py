@@ -19,15 +19,16 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # ######################### Data Creater ###########################
 
 
-def normalize(x):
+def normalize(x: np.ndarray) -> np.ndarray:
     return (x - x.min()) / (x.max() - x.min())
 
 
-def calc_filter(img, filter):
+def calc_filter(img: np.ndarray, filter: np.ndarray) -> np.ndarray:
     return normalize(img.dot(filter)[:, :, ::-1])
 
 
-def make_patch(data_path, save_path, size=256, step=256, ch=24, data_key='data'):
+def make_patch(data_path: str, save_path: str, size: int=256, step: int=256,
+               ch: int=24, data_key: str='data') -> None:
 
     if os.path.exists(save_path):
         shutil.rmtree(save_path)
@@ -52,7 +53,8 @@ def make_patch(data_path, save_path, size=256, step=256, ch=24, data_key='data')
     return None
 
 
-def make_patch_h5py(data_path, save_path, size=256, step=256, ch=24, data_key='data'):
+def make_patch_h5py(data_path: str, save_path: str, size: int=256, step: int=256,
+                    ch: int=24, data_key: str='data') -> None:
 
     if os.path.exists(save_path):
         shutil.rmtree(save_path)
@@ -81,7 +83,8 @@ def make_patch_h5py(data_path, save_path, size=256, step=256, ch=24, data_key='d
     return None
 
 
-def patch_mask(mask_path, save_path, size=256, step=256, ch=24, data_key='data'):
+def patch_mask(mask_path: str, save_path: str, size: int=256, step:
+               int=256, ch: int=24, data_key: str='data') -> None:
 
     if os.path.exists(save_path) is True:
         shutil.rmtree(save_path)
@@ -100,7 +103,8 @@ def patch_mask(mask_path, save_path, size=256, step=256, ch=24, data_key='data')
     return None
 
 
-def patch_mask_h5(mask_path, save_path, size=256, step=256, ch=24, data_key='data'):
+def patch_mask_h5(mask_path: str, save_path: str, size: int=256, step:
+                  int=256, ch: int=24, data_key: str='data') -> None:
 
     if os.path.exists(save_path) is True:
         shutil.rmtree(save_path)
@@ -121,7 +125,7 @@ def patch_mask_h5(mask_path, save_path, size=256, step=256, ch=24, data_key='dat
     return None
 
 
-def trans_h52mat(img_path):
+def trans_h52mat(img_path: str) -> np.ndarray:
     f = h5py.File(img_path, 'r')
     bands = np.array(f['bands'], dtype=np.float32)
     rad = np.array(f['rad'], dtype=np.float32).transpose(2, 1, 0)
@@ -130,7 +134,7 @@ def trans_h52mat(img_path):
     return datas
 
 
-def make_icvl_data(img_dir, save_dir):
+def make_icvl_data(img_dir: str, save_dir: str) -> None:
     if os.path.exists(save_dir):
         shutil.rmtree(save_dir)
     os.makedirs(save_dir, exist_ok=True)
@@ -149,13 +153,13 @@ def make_icvl_data(img_dir, save_dir):
 
 class RandomCrop(object):
 
-    def __init__(self, size):
+    def __init__(self, size: int):
         if isinstance(size, int):
             self.size = (size, size)
         else:
             self.size = size
 
-    def __call__(self, img):
+    def __call__(self, img: np.ndarray) -> np.ndarray:
         h, w, _ = img.shape
         i = np.random.randint(0, h - self.size[0], dtype=int)
         j = np.random.randint(0, w - self.size[1], dtype=int)
@@ -164,10 +168,10 @@ class RandomCrop(object):
 
 class RandomHorizontalFlip(object):
 
-    def __init__(self, rate=.5):
+    def __init__(self, rate: float=.5):
         self.rate = rate
 
-    def __call__(self, img):
+    def __call__(self, img: np.ndarray) -> np.ndarray:
         if np.random.random() < self.rate:
             img = img[:, ::-1, :].copy()
         return img
@@ -175,10 +179,10 @@ class RandomHorizontalFlip(object):
 
 class RandomRotation(object):
 
-    def __init__(self, angle=[0, 90, 180, 270]):
+    def __init__(self, angle: list=[0, 90, 180, 270]):
         self.angle = angle
 
-    def __call__(self, img):
+    def __call__(self, img: np.ndarray) -> np.ndarray:
         idx = np.random.randint(len(self.angle))
         img = rotate(img, angle=self.angle[idx])
         return img
@@ -189,7 +193,8 @@ class RandomRotation(object):
 
 class ModelCheckPoint(object):
 
-    def __init__(self, checkpoint_path, model_name, mkdir=False, partience=1, verbose=True, *args, **kwargs):
+    def __init__(self, checkpoint_path: str, model_name: str, mkdir: bool=False,
+                 partience: int=1, verbose: bool=True, *args, **kwargs):
         self.checkpoint_path = os.path.join(checkpoint_path, model_name)
         self.model_name = model_name
         self.partience = partience
@@ -206,7 +211,7 @@ class ModelCheckPoint(object):
         else:
             self.colab2drive_flag = False
 
-    def callback(self, model, epoch, *args, **kwargs):
+    def callback(self, model: str, epoch: int, *args, **kwargs) -> None:
         if 'loss' not in kwargs and 'val_loss' not in kwargs:
             assert 'None Loss'
         else:
@@ -235,7 +240,8 @@ class ModelCheckPoint(object):
 
 class PlotStepLoss(object):
 
-    def __init__(self, checkpoint_path, model_name, mkdir=False, partience=1, verbose=True, *args, **kwargs):
+    def __init__(self, checkpoint_path: str, model_name: str, mkdir: bool=False,
+                 partience: int=1, verbose: bool=True, *args, **kwargs):
         self.checkpoint_path = checkpoint_path
         self.model_name = model_name
         self.partience = partience
@@ -245,7 +251,7 @@ class PlotStepLoss(object):
                 shutil.rmtree(self.checkpoint_path)
             os.makedirs(self.checkpoint_path)
 
-    def callback(self, model, epoch, *args, **kwargs):
+    def callback(self, model: str, epoch: int, *args, **kwargs) -> None:
         if 'loss' not in kwargs.keys() and 'val_loss' not in kwargs.keys():
             assert 'None Loss'
         else:
@@ -266,8 +272,9 @@ class PlotStepLoss(object):
 
 class Draw_Output(object):
 
-    def __init__(self, dataset, data_name, *args, save_path='output', partience=5,
-                 verbose=False, ch=10, **kwargs):
+    def __init__(self, dataset: torch.utils.data.Dataset, data_name: str, *args,
+                 save_path: str='output', partience: int=5,
+                 verbose: bool=False, ch: int=10, **kwargs):
         '''
         Parameters
         ---
@@ -297,7 +304,7 @@ class Draw_Output(object):
             shutil.rmtree(save_path)
         os.mkdir(save_path)
 
-    def callback(self, model, epoch, *args, **kwargs):
+    def callback(self, model: str, epoch: int, *args, **kwargs) -> None:
         keys = kwargs.keys()
         if epoch % self.partience == 0:
             epoch_save_path = os.path.join(self.save_path, f'epoch_{epoch:05d}')
@@ -334,12 +341,12 @@ class Draw_Output(object):
                     plt.close()
         return self
 
-    def _trans_data(self, data, label):
+    def _trans_data(self, data: torch.Tensor, label: torch.Tensor):
         data = data.unsqueeze(0).to(device)
         label = label.unsqueeze(0).to(device)
         return data, label
 
-    def _plot_sub(self, img, idx, title='title'):
+    def _plot_sub(self, img: np.ndarray, idx: int, title: str='title') -> None:
         plt.subplot(1, 4, idx)
         if title == 'diff':
             cmap = 'jet'
