@@ -149,8 +149,9 @@ class Trainer(object):
     def _save_progress(self, loss_progress: np.ndarray, *args,
                        mode: str='train', **kwargs) -> None:
 
-        with open(self.output_progress_path, 'wb') as f:
-            pickle.dump(os.path.join(loss_progressl, f'{mode}.pkl') , f)
+        save_path = os.path.join(self.output_progress_path, f'{mode}.pkl')
+        with open(save_path, 'wb') as f:
+            pickle.dump(save_path, f)
         return self
 
 
