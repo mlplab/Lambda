@@ -109,6 +109,8 @@ class Trainer(object):
                 self.scheduler.step()
             print('-' * int(columns))
 
+        train_output = np.array(train_output)
+        val_output = np.array(val_output)
         self._save_progress(train_output, mode='train')
         self._save_progress(val_output, mode='val')
         return train_output, val_output
@@ -151,7 +153,7 @@ class Trainer(object):
 
         save_path = os.path.join(self.output_progress_path, f'{mode}.pkl')
         with open(save_path, 'wb') as f:
-            pickle.dump(save_path, f)
+            pickle.dump(loss_progress, f)
         return self
 
 
