@@ -3,16 +3,20 @@
 
 import os
 import h5py
+import pickle
 import shutil
 import scipy.io
 from skimage.transform import rotate
 import numpy as np
+import seaborn as sns
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch
 import torchvision
 
 
+# sns.set(font_scale=2)
+sns.set()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -359,3 +363,29 @@ class Draw_Output(object):
         plt.yticks([])
         plt.title(title)
         return self
+
+
+# ######################### Evaluate Tools ###########################
+
+
+def plot_progress(ckpt_path: str, *args, mode: str='train',
+                  eval_names: list=['MSE Loss', 'PSNR', 'SSIM', 'SAM'],
+                  **kwargs) -> None:
+
+    figsize = kwargs.get('figsize', None)
+    dir_names = [os.path.join(ckpt_path, name) for name in os.listdir(ckpt_path)
+                 if os.path.isdir(os.path.join(ckpt_path, name))]
+
+    for i, eval_name in enumerate(eval_names):
+        plt.figure(figsize=figsize)
+        for dir_name in dir_names:
+            with open(os.path.join(dir_name, f'{mode}.pkl'), 'rb') as f:
+                data = pickle.load(f)
+            file_name = os.path.split(dir_name)[-1]
+            plt.plot(data[:, i], label=f'{file_name}')
+        plt.legend()
+        plt.tight_layout()
+        plt.title(eval_name)
+        plt.savefig(os.path.join(ckpt_path, f'{eval_name}_{mode}.png'), bbox_inches='tight')
+        plt.close()
+
