@@ -372,7 +372,7 @@ def plot_progress(ckpt_path: str, *args, mode: str='train',
                   eval_names: list=['MSE Loss', 'PSNR', 'SSIM', 'SAM'],
                   **kwargs) -> None:
 
-    figsize = kwargs.get('figsize', None)
+    figsize = kwargs.get('figsize', (8, 6))
     dir_names = [os.path.join(ckpt_path, name) for name in os.listdir(ckpt_path)
                  if os.path.isdir(os.path.join(ckpt_path, name))]
 
