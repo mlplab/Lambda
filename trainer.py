@@ -40,6 +40,7 @@ class Trainer(object):
         self.ones = torch.ones(shape).to(device)
         self.output_save = kwargs.get('output_save')
         self.output_path = kwargs.get('output_path')
+        self.output_progress_path = kwargs.get('output_progress_path')
         self.colab_mode = kwargs.get('colab_mode', False)
 
     def train(self, epochs, train_dataloader, val_dataloader, init_epoch=None):
@@ -108,6 +109,8 @@ class Trainer(object):
                 self.scheduler.step()
             print('-' * int(columns))
 
+        self._save_progress(train_output, mode='train')
+        self._save_progress(val_output, mode='val')
         return train_output, val_output
 
     def _trans_data(self, inputs, labels):
@@ -142,6 +145,13 @@ class Trainer(object):
         x = torch.where(x > 1., self.ones[:bs], x)
         x = torch.where(x < 0., self.zeros[:bs], x)
         return x
+
+    def _save_progress(self, loss_progress: np.ndarray, *args,
+                       mode: str='train', **kwargs) -> None:
+
+        with open(self.output_progress_path, 'wb') as f:
+            pickle.dump(os.path.join(loss_progressl, f'{mode}.pkl') , f)
+        return self
 
 
 class Deeper_Trainer(Trainer):
