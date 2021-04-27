@@ -6,7 +6,7 @@ CMDNAME=`basename $0`
 
 batch_size=64
 epoch=150
-datasets="CAVE"
+dataset="Harvard"
 concat="False"
 model_name=("HSCNN DeepSSPrior HyperReconNet")
 block_num=9
@@ -35,13 +35,10 @@ echo $block_num
 
 
 model_name=( `echo $model_name | tr ' ' ' '` )
-dataset=( `echo $datasets | tr ' ' ' '` )
 modes=( `echo $modes | tr ' ' ' '` )
 for name in $model_name[@]; do
     echo $name
 done
-for dataset in $datasets[@]; do
-    for name in $model_name[@]; do
-        python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num
-    done
+for name in $model_name[@]; do
+    python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num
 done
