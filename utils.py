@@ -379,10 +379,13 @@ def plot_progress(ckpt_path: str, *args, mode: str='train',
     for i, eval_name in enumerate(eval_names):
         plt.figure(figsize=figsize)
         for dir_name in dir_names:
-            with open(os.path.join(dir_name, f'{mode}.pkl'), 'rb') as f:
-                data = pickle.load(f)
-            file_name = os.path.split(dir_name)[-1]
-            plt.plot(data[:, i], label=f'{file_name}')
+            try:
+                with open(os.path.join(dir_name, f'{mode}.pkl'), 'rb') as f:
+                    data = pickle.load(f)
+                file_name = os.path.split(dir_name)[-1]
+                plt.plot(data[:, i], label=f'{file_name}')
+            except FileNotFoundError:
+                pass
         plt.legend()
         plt.tight_layout()
         plt.title(eval_name)
