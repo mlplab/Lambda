@@ -15,6 +15,7 @@ from model.HyperReconNet import HyperReconNet
 from data_loader import PatchMaskDataset
 from utils import RandomCrop, RandomHorizontalFlip, RandomRotation
 from utils import ModelCheckPoint, Draw_Output
+from utils import plot_progress
 
 
 parser = argparse.ArgumentParser(description='Train Model')
@@ -104,10 +105,14 @@ print(model_name)
 
 ckpt_cb = ModelCheckPoint(ckpt_path, save_model_name,
                           mkdir=True, partience=1, varbose=True)
-trainer = Trainer(model, criterion, optim, scheduler=scheduler, callbacks=[ckpt_cb])
+trainer = Trainer(model, criterion, optim, scheduler=scheduler,
+                  callbacks=[ckpt_cb],
+                  output_progress_path=os.path.join(ckpt_path, save_model_name))
 train_loss, val_loss = trainer.train(epochs, train_dataloader, test_dataloader)
-# torch.save({'model_state_dict': model.state_dict(),
-#             'optim': optim.state_dict(),
-#             'train_loss': train_loss, 'val_loss': val_loss,
-#             'epoch': epochs},
-#             os.path.join(trained_ckpt_path, f'{save_model_name}.tar'))
+torch.save({'model_state_dict': model.state_dict(),
+            'optim': optim.state_dict(),
+            'train_loss': train_loss, 'val_loss': val_loss,
+            'epoch': epochs},
+            os.path.join(ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar'))
+plot_progress(ckpt_path, mode='train')
+plot_progress(ckpt_path, mode='val')
