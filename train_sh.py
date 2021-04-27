@@ -65,7 +65,7 @@ ckpt_path = os.path.join('../SCI_ckpt', f'{data_name}_{dt_now.month:02d}{dt_now.
 
 
 model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior}
-activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
+activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu'}
 
 
 train_transform = (RandomHorizontalFlip(), torchvision.transforms.ToTensor())
@@ -88,7 +88,7 @@ model = model_obj[model_name](input_ch, 31, block_num=block_num,
                               activation=activation, ratio=ratio, mode=mode)
 
 
-save_model_name = f'{model_name}_{activation}_{ratio}_{mode}_{block_num:02d}'
+save_model_name = f'{model_name}_{activation}_{block_num:02d}'
 
 
 model.to(device)
