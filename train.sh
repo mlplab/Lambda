@@ -10,8 +10,6 @@ datasets="CAVE"
 concat="False"
 model_name=("HSCNN DeepSSPrior HyperReconNet")
 block_num=9
-ratios=(2 3 4)
-modes=("mix1 mix2")
 
 
 while getopts b:e:d:c:m:bn: OPT
@@ -44,15 +42,6 @@ for name in $model_name[@]; do
 done
 for dataset in $datasets[@]; do
     for name in $model_name[@]; do
-        if [ $name = "Ghost" ]; then
-            for ratio in $ratios[@]; do
-                for mode in $modes[@]; do
-                    echo $mode
-                    python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -r $ratio -md $mode
-                done
-            done
-        else
-            python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num
-        fi
+        python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num
     done
 done
