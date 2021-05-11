@@ -12,6 +12,7 @@ from trainer import Trainer
 from model.HSCNN import HSCNN
 from model.DeepSSPrior import DeepSSPrior
 from model.HyperReconNet import HyperReconNet
+from model.Ghost_Mix import GhostMix
 from data_loader import PatchMaskDataset
 from utils import RandomCrop, RandomHorizontalFlip, RandomRotation
 from utils import ModelCheckPoint, Draw_Output
@@ -65,8 +66,8 @@ ckpt_path = os.path.join('../SCI_ckpt', f'{data_name}_{dt_now.month:02d}{dt_now.
 # os.makedirs(trained_ckpt_path, exist_ok=True)
 
 
-model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior}
-activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu'}
+model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior, 'Ghost': GhostMix}
+activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
 
 
 train_transform = (RandomHorizontalFlip(), torchvision.transforms.ToTensor())
@@ -89,7 +90,11 @@ model = model_obj[model_name](input_ch, 31, block_num=block_num,
                               activation=activation, ratio=ratio, mode=mode)
 
 
-save_model_name = f'{model_name}_{activation}_{block_num:02d}'
+if model_name == 'Ghost':
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}'
+else:
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}'
+
 
 
 model.to(device)
@@ -103,6 +108,7 @@ summary(model, (input_ch, 64, 64))
 print(model_name)
 
 
+all_trained_ckpt_path = os.path.join(ckpt_path, 'all_trained')
 ckpt_cb = ModelCheckPoint(ckpt_path, save_model_name,
                           mkdir=True, partience=1, varbose=True)
 trainer = Trainer(model, criterion, optim, scheduler=scheduler,
@@ -113,6 +119,6 @@ torch.save({'model_state_dict': model.state_dict(),
             'optim': optim.state_dict(),
             'train_loss': train_loss, 'val_loss': val_loss,
             'epoch': epochs},
-            os.path.join(ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar'))
+            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar'))
 plot_progress(ckpt_path, mode='train')
 plot_progress(ckpt_path, mode='val')
