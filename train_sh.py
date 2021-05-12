@@ -64,10 +64,17 @@ filter_path = os.path.join('../SCI_dataset', 'D700_CSF.mat')
 ckpt_path = os.path.join('../SCI_ckpt', f'{data_name}_{dt_now.month:02d}{dt_now.day:02d}')
 # trained_ckpt_path = f'all_checkpoint_{dt_now.month:02d}{dt_now.day:02d}'
 # os.makedirs(trained_ckpt_path, exist_ok=True)
-
-
+all_trained_ckpt_path = os.path.join(ckpt_path, 'all_trained')
+os.makedirs(all_trained_ckpt_path, exist_ok=True)
 model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior, 'Ghost': GhostMix}
 activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
+activation = activations[model_name]
+if model_name == 'Ghost':
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}'
+else:
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}'
+if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar')):
+    exit(0)
 
 
 train_transform = (RandomHorizontalFlip(), torchvision.transforms.ToTensor())
@@ -83,18 +90,10 @@ if model_name not in model_obj.keys():
     sys.exit(0)
 
 
-activation = activations[model_name]
 
 
 model = model_obj[model_name](input_ch, 31, block_num=block_num,
                               activation=activation, ratio=ratio, mode=mode)
-
-
-if model_name == 'Ghost':
-    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}'
-else:
-    save_model_name = f'{model_name}_{activation}_{block_num:02d}'
-
 
 
 model.to(device)
@@ -108,7 +107,6 @@ summary(model, (input_ch, 64, 64))
 print(model_name)
 
 
-all_trained_ckpt_path = os.path.join(ckpt_path, 'all_trained')
 ckpt_cb = ModelCheckPoint(ckpt_path, save_model_name,
                           mkdir=True, partience=1, varbose=True)
 trainer = Trainer(model, criterion, optim, scheduler=scheduler,

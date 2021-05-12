@@ -6,12 +6,12 @@ CMDNAME=`basename $0`
 
 batch_size=64
 epoch=150
-datasets=("CAVE" "Harvard")
+datasets=("CAVE Harvard")
 concat="False"
 model_name=("HSCNN DeepSSPrior HyperReconNet Ghost")
 block_num=9
 ratios=(2 3 4)
-modes=('normal' 'mix1' 'mix2')
+modes=("normal mix1 mix2")
 
 
 while getopts b:e:d:c:m:bn: OPT
