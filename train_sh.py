@@ -28,10 +28,12 @@ parser.add_argument('--model_name', '-m', default='HSCNN', type=str, help='Model
 parser.add_argument('--block_num', '-bn', default=9, type=int, help='Model Block Number')
 parser.add_argument('--ratio', '-r', default=2, type=int, help='Ghost ratio')
 parser.add_argument('--mode', '-md', default='None', type=str, help='Mix mode')
+parser.add_argument('--start_time', '-st', default='0000', type=str, help='start training time')
 args = parser.parse_args()
 
 
-dt_now = datetime.datetime.now()
+# dt_now = datetime.datetime.now()
+dt_now = args.start_time
 batch_size = args.batch_size
 epochs = args.epochs
 if args.concat == 'False':
@@ -58,10 +60,10 @@ test_path = os.path.join(img_path, 'test_patch_data')
 mask_path = os.path.join(img_path, 'mask_data')
 callback_path = os.path.join(img_path, 'callback_path')
 callback_mask_path = os.path.join(img_path, 'mask_show_data')
-callback_result_path = os.path.join('../SCI_result', f'{data_name}_{dt_now.month:02d}{dt_now.day:02d}', f'{model_name}_{block_num}')
+callback_result_path = os.path.join('../SCI_result', f'{data_name}_{dt_now}', f'{model_name}_{block_num}')
 os.makedirs(callback_result_path, exist_ok=True)
 filter_path = os.path.join('../SCI_dataset', 'D700_CSF.mat')
-ckpt_path = os.path.join('../SCI_ckpt', f'{data_name}_{dt_now.month:02d}{dt_now.day:02d}')
+ckpt_path = os.path.join('../SCI_ckpt', f'{data_name}_{dt_now}')
 # trained_ckpt_path = f'all_checkpoint_{dt_now.month:02d}{dt_now.day:02d}'
 # os.makedirs(trained_ckpt_path, exist_ok=True)
 all_trained_ckpt_path = os.path.join(ckpt_path, 'all_trained')
@@ -73,7 +75,7 @@ if model_name == 'Ghost':
     save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}'
 else:
     save_model_name = f'{model_name}_{activation}_{block_num:02d}'
-if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar')):
+if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now}.tar')):
     print('already trained')
     exit(0)
 
@@ -118,6 +120,6 @@ torch.save({'model_state_dict': model.state_dict(),
             'optim': optim.state_dict(),
             'train_loss': train_loss, 'val_loss': val_loss,
             'epoch': epochs},
-            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar'))
+            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_nowd}.tar'))
 plot_progress(ckpt_path, mode='train')
 plot_progress(ckpt_path, mode='val')

@@ -12,6 +12,7 @@ model_name=("HSCNN DeepSSPrior HyperReconNet Ghost")
 block_num=9
 ratios=(2 3 4)
 modes=("normal mix1 mix2")
+start_time=$(date "+%m%d")
 
 
 while getopts b:e:d:c:m:bn: OPT
@@ -34,6 +35,7 @@ echo $batch_size
 echo $epoch
 echo $dataset
 echo $block_num
+echo $start_time
 
 
 model_name=( `echo $model_name | tr ' ' ' '` )
@@ -48,12 +50,12 @@ for dataset in $datasets[@]; do
             for ratio in $ratios[@]; do
                 for mode in $modes[@]; do
                     echo $dataset $ratio $mode $name
-                    python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -r $ratio -md $mode
+                    python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -r $ratio -md $mode -st $start_time
                 done
             done
         else
-            echo $dataset $name
-            python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num
+            echo $dataset $name 
+            python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -st $start_time
         fi
     done
 done
