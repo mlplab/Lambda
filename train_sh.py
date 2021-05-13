@@ -74,6 +74,7 @@ if model_name == 'Ghost':
 else:
     save_model_name = f'{model_name}_{activation}_{block_num:02d}'
 if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now.month:02d}{dt_now.day:02d}.tar')):
+    print('already trained')
     exit(0)
 
 
