@@ -20,7 +20,7 @@ do
     case $OPT in
         b) batch_size=$OPTARG ;;
         e) epoch=$OPTARG ;;
-        d) dataset=$OPTARG ;;
+        d) datasets=$OPTARG ;;
         c) concat=$OPTARG ;;
         m) model_name=$OPTARG ;;
         bn) block_num=$OPTARG ;;
