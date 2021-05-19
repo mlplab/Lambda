@@ -122,6 +122,6 @@ torch.save({'model_state_dict': model.state_dict(),
             'optim': optim.state_dict(),
             'train_loss': train_loss, 'val_loss': val_loss,
             'epoch': epochs},
-            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_nowd}.tar'))
+            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now}.tar'))
 plot_progress(ckpt_path, mode='train')
 plot_progress(ckpt_path, mode='val')
