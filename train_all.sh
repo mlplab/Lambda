@@ -8,10 +8,10 @@ batch_size=64
 epoch=150
 datasets=("CAVE Harvard")
 concat="False"
-model_name=("HSCNN DeepSSPrior HyperReconNet Ghost")
+model_name=("Ghost")
 block_num=9
 ratios=(2 3 4)
-modes=("normal mix1 mix2")
+modes=("normal mix1 mix2 mix3 mix4")
 loss_modes=("mse" "mse_sam")
 start_time=$(date "+%m%d")
 
