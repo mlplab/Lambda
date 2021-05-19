@@ -12,6 +12,7 @@ model_name=("HSCNN DeepSSPrior HyperReconNet Ghost")
 block_num=9
 ratios=(2 3 4)
 modes=("normal mix1 mix2")
+loss_modes=("mse" "mse_sam")
 start_time=$(date "+%m%d")
 
 
@@ -46,16 +47,24 @@ for name in $model_name[@]; do
 done
 for dataset in $datasets[@]; do
     for name in $model_name[@]; do
-        if [ $name = "Ghost" ]; then
-            for ratio in $ratios[@]; do
-                for mode in $modes[@]; do
-                    echo $dataset $ratio $mode $name
-                    python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -r $ratio -md $mode -st $start_time
+        for loss_mode in $loss_modes; do
+
+            echo $dataset $name $loss_mode
+
+            if [ $name = "Ghost" ]; then
+
+                for ratio in $ratios[@]; do
+                    for mode in $modes[@]; do
+                        echo $ratio $mode $name
+                        python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -r $ratio -md $mode -st $start_time -l $loss_mode
+                    done
                 done
-            done
-        else
-            echo $dataset $name 
-            python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -st $start_time
-        fi
+
+            else
+                echo $name 
+                python train_sh.py -b $batch_size -e $epoch -d $dataset -c $concat -m $name -bn $block_num -st $start_time -l $loss_mode
+            fi
+
+        done
     done
 done

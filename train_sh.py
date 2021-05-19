@@ -13,6 +13,7 @@ from model.HSCNN import HSCNN
 from model.DeepSSPrior import DeepSSPrior
 from model.HyperReconNet import HyperReconNet
 from model.Ghost_Mix import GhostMix
+from model.layers import MSE_SAMLoss
 from data_loader import PatchMaskDataset
 from utils import RandomCrop, RandomHorizontalFlip, RandomRotation
 from utils import ModelCheckPoint, Draw_Output
@@ -29,6 +30,7 @@ parser.add_argument('--block_num', '-bn', default=9, type=int, help='Model Block
 parser.add_argument('--ratio', '-r', default=2, type=int, help='Ghost ratio')
 parser.add_argument('--mode', '-md', default='None', type=str, help='Mix mode')
 parser.add_argument('--start_time', '-st', default='0000', type=str, help='start training time')
+parser.add_argument('--loss', '-l', default='mse', type=str, help='Loss Mode')
 args = parser.parse_args()
 
 
@@ -47,6 +49,7 @@ model_name = args.model_name
 block_num = args.block_num
 ratio = args.ratio
 mode = args.mode
+loss_mode = args.loss
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -72,9 +75,9 @@ model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': Deep
 activations = {'HSCNN': 'leaky', 'HyperReconNet': 'relu', 'DeepSSPrior': 'relu', 'Ghost': 'relu'}
 activation = activations[model_name]
 if model_name == 'Ghost':
-    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}'
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}_{loss_mode}'
 else:
-    save_model_name = f'{model_name}_{activation}_{block_num:02d}'
+    save_model_name = f'{model_name}_{activation}_{block_num:02d}_{loss_mode}'
 if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now}.tar')):
     print('already trained')
     exit(0)
@@ -93,14 +96,13 @@ if model_name not in model_obj.keys():
     sys.exit(0)
 
 
-
-
 model = model_obj[model_name](input_ch, 31, block_num=block_num,
                               activation=activation, ratio=ratio, mode=mode)
 
 
 model.to(device)
-criterion = torch.nn.MSELoss().to(device)
+criterions = {'mse': torch.nn.MSELoss, 'mse_sam': MSE_SAMLoss}
+criterion = criterions[loss_mode]().to(device)
 param = list(model.parameters())
 optim = torch.optim.Adam(lr=1e-3, params=param)
 scheduler = torch.optim.lr_scheduler.StepLR(optim, 25, .5)

@@ -629,7 +629,7 @@ class Mix_SS_Layer(torch.nn.Module):
         se_flag = kwargs.get('se_flag', False)
         self.spatial_conv = GroupConv(input_ch, feature_num, group_num, kernel_size=3, stride=1)
         self.mix_conv = Mix_Conv(feature_num, feature_num, chunks)
-        self.se_block = Group_SE(feature_num, feature_num, chunks, kernel_size=1) if se_flag is True else torch.nn.Sequential()
+        # self.se_block = Group_SE(feature_num, feature_num, chunks, kernel_size=1) if se_flag is True else torch.nn.Sequential()
         self.spectral_conv = GroupConv(feature_num, output_ch, group_num, kernel_size=1, stride=1)
         self.shortcut = torch.nn.Sequential()
 
@@ -648,6 +648,6 @@ class Mix_SS_Layer(torch.nn.Module):
     def forward(self, x):
         h = self._activation_fn(self.spatial_conv(x))
         h = self._activation_fn(self.mix_conv(h))
-        h = self.se_block(h)
+        # h = self.se_block(h)
         h = self.spectral_conv(h)
         return h + self.shortcut(x)
