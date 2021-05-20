@@ -96,7 +96,7 @@ if model_name not in model_obj.keys():
     sys.exit(0)
 
 
-model = model_obj[model_name](input_ch, 31, block_num=block_num,
+model = model_obj[model_name](input_ch, 31, feature_num=31, block_num=block_num,
                               activation=activation, ratio=ratio, mode=mode)
 
 
