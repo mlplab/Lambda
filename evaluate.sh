@@ -4,10 +4,14 @@
 CMDNAME=`basename $0`
 
 
-dataset="Harvard"
+datasets="CAVE"
 concat="False"
-model_name=("HSCNN DeepSSPrior HyperReconNet")
+model_name=("Ghost")
 block_num=9
+ratios=(2 3 4)
+modes=("normal mix1 mix2 mix3 mix4")
+loss_modes=("mse" "mse_sam")
+start_time=$(date "+%m%d")
 
 
 while getopts d:c:m:b: OPT
@@ -30,9 +34,29 @@ echo $block_num
 
 
 model_name=( `echo $model_name | tr ' ' ' '` )
-for name in $model_name[@]; do
-    echo $name
-done
-for name in $model_name[@]; do
-    python evaluate_reconst_sh.py -d $dataset -c $concat -m $name -b $block_num
+datasets=( `echo $datasets | tr ' ' ' '` )
+modes=( `echo $modes | tr ' ' ' '` )
+for dataset in $datasets[@]; do
+    echo $dataset
+    for name in $model_name[@]; do
+        for loss_mode in $loss_modes; do
+
+            echo $dataset $name $loss_mode
+
+            if [ $name = "Ghost" ]; then
+
+                for ratio in $ratios[@]; do
+                    for mode in $modes[@]; do
+                        echo $ratio $mode $name
+                        python evaluate_reconst_sh.py -d $dataset -c $concat -m $name -b $block_num -r $ratio -md $mode -st $start_time -l $loss_mode
+                    done
+                done
+
+            else
+                echo $name 
+                    python evaluate_reconst_sh.py -d $dataset -c $concat -m $name -b $block_num -st $start_time -l $loss_mode
+            fi
+
+        done
+    done
 done

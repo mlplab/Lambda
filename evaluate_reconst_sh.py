@@ -24,10 +24,13 @@ parser.add_argument('--model_name', '-m', default='HSCNN', type=str, help='Model
 parser.add_argument('--block_num', '-b', default=9, type=int, help='Model Block Number')
 parser.add_argument('--ratio', '-r', default=2, type=int, help='Ghost ratio')
 parser.add_argument('--mode', '-md', default='None', type=str, help='Mix mode')
+parser.add_argument('--start_time', '-st', default='0000', type=str, help='start training time')
+parser.add_argument('--loss', '-l', default='mse', type=str, help='Loss Mode')
 args = parser.parse_args()
 
 
 device = 'cpu'
+dt_now = args.start_time
 data_name = args.dataset
 if args.concat == 'False':
     concat_flag = False
@@ -35,9 +38,7 @@ if args.concat == 'False':
 else:
     concat_flag = True
     input_ch = 32
-
-
-dt_now = datetime.datetime.now()
+loss_mode = args.loss
 
 
 model_obj = {'HSCNN': HSCNN, 'HyperReconNet': HyperReconNet, 'DeepSSPrior': DeepSSPrior, 'Ghost': GhostMix}
@@ -56,15 +57,15 @@ mask_path = os.path.join(img_path, 'eval_mask_data')
 
 
 activation = activations[model_name]
-ckpt_dir = f'../SCI_ckpt/{data_name}_0511/all_trained'
+ckpt_dir = f'../SCI_ckpt/{data_name}_{dt_now}/all_trained'
 if model_name == 'Ghost':
-    ckpt_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02}_{mode}_{dt_now.month:02d}{dt_now.day:02d}'
+    ckpt_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02}_{mode}_{loss_mode}'
 else:
-    ckpt_name = f'{model_name}_{activation}_{block_num:02d}_{dt_now.month:02d}{dt_now.day:02d}'
+    ckpt_name = f'{model_name}_{activation}_{block_num:02d}_{loss_mode}'
 ckpt_path = os.path.join(ckpt_dir, ckpt_name + '.tar')
 
 
-output_path = os.path.join('../SCI_result/', data_name, ckpt_name)
+output_path = os.path.join('../SCI_result/', f'{data_name}_{dt_now}', ckpt_name)
 output_img_path = os.path.join(output_path, 'output_img')
 output_mat_path = os.path.join(output_path, 'output_mat')
 output_csv_path = os.path.join(output_path, 'output.csv')
