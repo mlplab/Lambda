@@ -277,7 +277,8 @@ class Group_SE(torch.nn.Module):
     def __init__(self, input_ch, output_ch, chunks, kernel_size, **kwargs):
         super(Group_SE, self).__init__()
         ratio = kwargs.get('ratio', 2)
-        self.activation = kwargs.get('activation')
+        activations = {'relu': ReLU, 'leaky': Leaky, 'swish': Swish, 'mish': Mish}
+        activation = kwargs.get('activation', 'relu').lower()
         if ratio == 1:
             feature_num = input_ch
             self.squeeze = torch.nn.Sequential()
@@ -285,20 +286,11 @@ class Group_SE(torch.nn.Module):
             feature_num = max(1, output_ch // ratio)
             self.squeeze = GroupConv(input_ch, feature_num, chunks, kernel_size, 1, 0)
         self.extention = GroupConv(feature_num, output_ch, chunks, kernel_size, 1, 0)
-
-    def _activation_fn(self, x):
-        if self.activation == 'swish':
-            return swish(x)
-        elif self.activation == 'mish':
-            return mish(x)
-        elif self.activation == 'leaky' or self.activation == 'leaky_relu':
-            return torch.nn.functional.leaky_relu(x)
-        else:
-            return torch.relu(x)
+        self.activation = activations[activation]()
 
     def forward(self, x):
         gap = torch.mean(x, [2, 3], keepdim=True)
-        squeeze = self._activation_fn(self.squeeze(gap))
+        squeeze = self.activation(self.squeeze(gap))
         extention = self.extention(squeeze)
         return torch.sigmoid(extention) * x
 
@@ -327,29 +319,21 @@ class Mix_SS_Layer(torch.nn.Module):
 
     def __init__(self, input_ch, output_ch, chunks, *args, feature_num=64, group_num=1, **kwargs):
         super(Mix_SS_Layer, self).__init__()
-        self.activation = kwargs.get('activation', 'relu')
+        activations = {'relu': ReLU, 'leaky': Leaky, 'swish': Swish, 'mish': Mish}
+        activation = kwargs.get('activation', 'relu').lower()
         se_flag = kwargs.get('se_flag', False)
         self.spatial_conv = GroupConv(input_ch, feature_num, group_num, kernel_size=3, stride=1)
         self.mix_conv = Mix_Conv(feature_num, feature_num, chunks)
         self.se_block = Group_SE(feature_num, feature_num, chunks, kernel_size=1) if se_flag is True else torch.nn.Sequential()
         self.spectral_conv = GroupConv(feature_num, output_ch, group_num, kernel_size=1, stride=1)
         self.shortcut = torch.nn.Sequential()
+        self.spatial_activation = activations[activation]()
+        self.mix_activation = activations[activation]()
 
-    def _activation_fn(self, x):
-        if self.activation == 'swish':
-            return swish(x)
-        elif self.activation == 'mish':
-            return mish(x)
-        elif self.activation == 'leaky' or self.activation == 'leaky_relu':
-            return torch.nn.functional.leaky_relu(x)
-        elif self.activation == 'relu':
-            return torch.nn.function.relu(x)
-        else:
-            return x
 
     def forward(self, x):
-        h = self._activation_fn(self.spatial_conv(x))
-        h = self._activation_fn(self.mix_conv(h))
+        h = self.spatial_activation(self.spatial_conv(x))
+        h = self.mix_activation(self.mix_conv(h))
         h = self.se_block(h)
         h = self.spectral_conv(h)
         return h + self.shortcut(x)

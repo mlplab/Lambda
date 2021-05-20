@@ -78,7 +78,7 @@ if model_name == 'Ghost':
     save_model_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02d}_{mode}_{loss_mode}'
 else:
     save_model_name = f'{model_name}_{activation}_{block_num:02d}_{loss_mode}'
-if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now}.tar')):
+if os.path.exists(os.path.join(all_trained_ckpt_path, f'{save_model_name}.tar')):
     print('already trained')
     exit(0)
 
@@ -122,6 +122,6 @@ torch.save({'model_state_dict': model.state_dict(),
             'optim': optim.state_dict(),
             'train_loss': train_loss, 'val_loss': val_loss,
             'epoch': epochs},
-            os.path.join(all_trained_ckpt_path, f'{save_model_name}_{dt_now}.tar'))
-plot_progress(ckpt_path, mode='train')
-plot_progress(ckpt_path, mode='val')
+            os.path.join(all_trained_ckpt_path, f'{save_model_name}.tar'))
+plot_progress(ckpt_path, mode='train', figsize=(16, 9))
+plot_progress(ckpt_path, mode='val', figsize=(16, 9))
