@@ -36,6 +36,7 @@ echo $block_num
 model_name=( `echo $model_name | tr ' ' ' '` )
 datasets=( `echo $datasets | tr ' ' ' '` )
 modes=( `echo $modes | tr ' ' ' '` )
+
 for dataset in $datasets[@]; do
     echo $dataset
     for name in $model_name[@]; do
@@ -43,7 +44,6 @@ for dataset in $datasets[@]; do
             for loss_mode in $loss_modes; do
 
                 echo $dataset $name $loss_mode
-
 
                 for ratio in $ratios[@]; do
                     for mode in $modes[@]; do
@@ -55,7 +55,7 @@ for dataset in $datasets[@]; do
             done
         else
             echo $name
-            python evaluate_reconst_sh.py -d $dataset -c $concat -m $name -b $block_num -st $start_time -l $loss_mode
+            python evaluate_reconst_sh.py -d $dataset -c $concat -m $name -b $block_num -st $start_time 
         fi
     done
 done
