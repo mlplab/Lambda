@@ -82,7 +82,7 @@ test_dataset = PatchEvalDataset(test_path, mask_path, transform=None, concat=con
 if model_name not in model_obj.keys():
     print('Enter Model Name')
     sys.exit(0)
-model = model_obj[model_name](input_ch, 31, block_num=block_num,
+model = model_obj[model_name](input_ch, 31, block_num=block_num, feature_num=31,
                               activation=activations[model_name], 
                               ratio=ratio, mode=mode)
 
