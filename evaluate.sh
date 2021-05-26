@@ -6,7 +6,7 @@ CMDNAME=`basename $0`
 
 datasets="Harvard"
 concat="False"
-model_name=("Ghost")
+model_name=("HSCNN" "HyperReconNet" "DeepSSPrior" "Ghost")
 block_num=9
 ratios=(2 3 4)
 modes=("normal mix1 mix2 mix3 mix4")
