@@ -61,7 +61,7 @@ ckpt_dir = f'../SCI_ckpt/{data_name}_{dt_now}/all_trained'
 if model_name == 'Ghost':
     ckpt_name = f'{model_name}_{activation}_{block_num:02d}_{ratio:02}_{mode}_{loss_mode}'
 else:
-    ckpt_name = f'{model_name}_{block_num:02d}'
+    ckpt_name = f'{model_name}_{activation}_{block_num:02d}'
 ckpt_path = os.path.join(ckpt_dir, ckpt_name + '.tar')
 
 
