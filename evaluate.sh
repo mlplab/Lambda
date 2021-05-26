@@ -4,14 +4,14 @@
 CMDNAME=`basename $0`
 
 
-datasets="CAVE"
+datasets="Harvard"
 concat="False"
 model_name=("Ghost")
 block_num=9
 ratios=(2 3 4)
 modes=("normal mix1 mix2 mix3 mix4")
 loss_modes=("mse" "mse_sam")
-start_time=$(date "+%m%d")
+start_time="0521"
 
 
 while getopts d:c:m:b: OPT
