@@ -71,7 +71,7 @@ class Evaluater(object):
         self.save_alls_path = save_img_path
         self.save_mat_path = save_mat_path
         self.save_csv_path = save_csv_path
-        self.output_ch = {'CAVE': (26, 16, 9), 'Harvard': (21, 11, 12), 'ICVL': (26, 16, 9)}
+        self.output_ch = {'CAVE': (26, 16, 9), 'Harvard': (26, 16, 9), 'ICVL': (26, 16, 9)}
         shape = kwargs.get('shape')
         if shape is None:
             shape = (512, 512, 31)
