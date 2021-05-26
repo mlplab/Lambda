@@ -13,7 +13,7 @@ block_num=9
 ratios=(2 3 4)
 modes=("normal mix1 mix2 mix3 mix4")
 loss_modes=("mse" "mse_sam")
-start_time="0521"  # $()
+start_time=$(date "+%m%d")
 
 
 while getopts b:e:d:c:m:bn: OPT
