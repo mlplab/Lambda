@@ -143,9 +143,7 @@ class Trainer(object):
         return [self.psnr(labels, output).item(), self.ssim(labels, output).item(), self.sam(labels, output).item()]
 
     def _cut(self, x):
-        bs, _, _, _ = x.size()
-        x = torch.where(x > 1., self.ones[:bs], x)
-        x = torch.where(x < 0., self.zeros[:bs], x)
+        x = torch.clamp(x, 0., 1.)
         return x
 
     def _save_progress(self, loss_progress: np.ndarray, *args,
