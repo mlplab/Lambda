@@ -11,20 +11,23 @@ from tqdm import tqdm
 from utils import make_patch, patch_mask
 
 
-patch_size = 48
-patch_step = 48
+parser = argparse.ArgumentParser(description='Train Model')
+parser.add_argument('--dataset', '-d', default='Harvard', type=str, help='Select dataset')
+parser.add_argument('--patch_size', '-p', default=48, type=int, help='Patch Size')
+args = parser.parse_args()
+
+
+patch_size = args.patch_size
+patch_step = args.patch_size
 show_size = 512
 show_step = 512
 
 
-parser = argparse.ArgumentParser(description='Train Model')
-parser.add_argument('--dataset', '-d', default='Harvard', type=str, help='Select dataset')
-args = parser.parse_args()
 
 
 data_name = args.dataset
 data_path = f'../SCI_dataset/{data_name}'
-save_path = f'../SCI_dataset/My_{data_name}'
+save_path = f'../SCI_dataset/My_{data_name}_{patch_size:04d}'
 
 
 train_data_path = os.path.join(save_path, 'train_data')
