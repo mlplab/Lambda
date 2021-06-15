@@ -208,7 +208,7 @@ class GANTrainer(Trainer):
             show_val_eval = []
             desc_str = f'{mode:>5} Epoch: {epoch + 1:05d} / {epochs:05d}'
             with tqdm(train_dataloader, desc=desc_str, ncols=columns, unit='step', ascii=True) as pbar:
-                                                                                                              vblk'                for i, (inputs, labels) in enumerate(pbar):
+                for i, (inputs, labels) in enumerate(pbar):
                     inputs, labels = self._trans_data(inputs, labels)
                     loss, output = self._step(inputs, labels)
                     train_loss.append(loss.item())
