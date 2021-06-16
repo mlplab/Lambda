@@ -154,9 +154,9 @@ class ReconstEvaluater(Evaluater):
     def metrics(self, model, dataset, evaluate_fn, header=None, hcr=False):
         model.eval()
         output_evaluate = []
-        # _, columns = os.popen('stty size', 'r').read().split()
-        # columns = int(columns) // 2
-        columns = 200
+        _, columns = os.popen('stty size', 'r').read().split()
+        columns = int(columns)
+        # columns = 200
         with torch.no_grad():
             # with tqdm(dataset, desc=desc_str, ncols=columns, unit='step', ascii=True) as pbar:
             with tqdm(dataset, ncols=columns, ascii=True) as pbar:
