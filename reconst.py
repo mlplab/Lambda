@@ -101,7 +101,7 @@ trainer = GANTrainer(Gmodel, Dmodel, Gcriterion, Dcriterion, Goptim, Doptim,
                      callbacks=[ckpt_cb])
 train_loss, val_loss = trainer.train(epochs, train_dataloader, test_dataloader)
 torch.save({'model_state_dict': Gmodel.state_dict(),
-            'optim': optim.state_dict(),
+            'optim': Goptim.state_dict(),
             'train_loss': train_loss, 'val_loss': val_loss,
             'epoch': epochs},
             os.path.join(all_trained_ckpt_path, f'{save_model_name}.tar'))
