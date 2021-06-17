@@ -202,6 +202,7 @@ class LambdaNet(torch.nn.Module):
 
     def __init__(self, input_ch, output_ch, *args, layer_num=6, deeper=False, **kwargs):
         super().__init__()
+        self.device = kwargs.get('device', 'cpu')
         self.ReconstStage = UNet(input_ch, output_ch)
         self.RefineStage = RefineUNet(output_ch, output_ch)
 
@@ -209,11 +210,11 @@ class LambdaNet(torch.nn.Module):
         return self.RefineStage(self.ReconstStage(x))
 
     def load_Reconst(self, path, key='model_state_dict'):
-        ckpt = torch.load(path)
+        ckpt = torch.load(path, map_location=self.device)
         self.ReconstStage.load_state_dict(ckpt[key])
         return self
 
     def load_Refine(self, path, key='model_state_dict'):
-        ckpt = torch.load(path)
+        ckpt = torch.load(path, map_location=self.device)
         self.RefineStage.load_state_dict(ckpt[key])
         return self
